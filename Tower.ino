@@ -1,11 +1,9 @@
 #include <Gamebuino-Meta.h>
-#include <stdlib.h>
 #include <cstdlib>
-#include <string>
 #include <time.h>
 #include <ctime>
 
-// ver. alpha 1.0
+// ver. beta 1.1
 
 // CONSTANTS //
 float current_brick_position = 10;
@@ -23,10 +21,10 @@ int past_brick_y[16] = {44};
 int past_brick_pos = 0;
 int random_red[16] = {55};
 int random_green[16] = {55};
-int random_blue[16] =  {255};
+int random_blue[16] = {255};
 char playerName[13];
 String GOtext = "";
-String coded_score = "Play the game first!";
+String coded_score = "";
 String temp_score = "";
 //gb.pickRandomSeed;
 void setup() {
@@ -132,7 +130,11 @@ void loop() {
         gb.display.setCursor(5, 34);
         gb.display.print("5. GRUNIO - 044");
         gb.display.setCursor(0, 45);
-        gb.display.print("Visit ToM.com to upload your result with a code:");
+        if (coded_score != "") {
+          gb.display.print("Visit ToM.com to upload your result with a code:");
+        } else {
+          gb.display.print("Play the game first!");
+        }
         gb.display.print(coded_score);
 				gb.waitForUpdate();
 				if (gb.buttons.pressed(BUTTON_B)) {
@@ -218,15 +220,16 @@ void loop() {
 						// new_line();
 					}
           if (brick_speed == 0) {
+            coded_score = "";
             GOtext = "SELECT: Highscore!";
             gb.gui.keyboard("Enter your name!", playerName);
             srand(time(NULL));
-            temp_score = to_string(score);
-            coded_score = (temp_score[0] * 2) + 1;
-            coded_score += (temp_score[1] * 2) + 1;
-            coded_score += (temp_score[2] * 2) + 1;
-            coded_score += (temp_score[0] * 2) + 1 + (temp_score[1] * 2) + 1 + (temp_score[2] * 2) + 1 + level;
-            coded_score += rand()% + 1;
+            temp_score = String(score);
+            coded_score = (int(temp_score[0] - '0') * 2 ) + 1;
+            coded_score += (int(temp_score[1] - '0') * 2 ) + 1;
+            coded_score += (int(temp_score[2] - '0') * 2 ) + 1;
+            coded_score += (int(temp_score[0] - '0') * 2 ) + 1 + (int(temp_score[1] - '0') * 2 ) + 1 + (int(temp_score[2] - '0') * 2 ) + 1 + past_brick_pos;
+            coded_score += rand()% 3;
           }
          
 					brick_speed *= 1.4;
